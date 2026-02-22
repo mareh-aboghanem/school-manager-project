@@ -43,3 +43,5 @@ As you can see, the application is divided into several components:
 - `storage.js`: Contains functions to save and load data from a JSON file, which will be used to persist the courses and trainee data.
 
 You may create additional files if needed.
+
+Project setup completed
