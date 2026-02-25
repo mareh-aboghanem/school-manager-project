@@ -5,12 +5,15 @@ import {
   loadCourseData,
 } from './storage.js';
 import { idGenerator, checkDatePattern, checkId } from './commenFunction.js';
+import chalk from 'chalk';
 
 function addCourse(name, startDate) {
   const courseData = loadCourseData();
   let id = idGenerator(courseData);
   if (!name || !startDate) {
-    throw new Error('ERROR: Must provide course name and start date');
+    throw new Error(
+      chalk.red('ERROR: Must provide course name and start date')
+    );
   }
   checkDatePattern(startDate);
   const newCourse = {
@@ -21,14 +24,13 @@ function addCourse(name, startDate) {
   };
   const updatedCourseData = [...courseData, newCourse];
   saveCourseData(updatedCourseData);
-  // REMEBER 
-  console.log('CREATED:', newCourse);
+  console.log(chalk.green(`CREATED: ${id} ${name} ${startDate}`));
 }
 
 function updateCourse(id, name, startDate) {
   const courseData = loadCourseData();
   if (!id || !name || !startDate) {
-    throw new Error('ERROR: Must provide ID, name and start date.');
+    throw new Error(chalk.red('ERROR: Must provide ID, name and start date.'));
   }
   checkId(courseData, id, 'Course');
   const numberId = Number(id);
@@ -44,8 +46,7 @@ function updateCourse(id, name, startDate) {
     return course;
   });
   saveCourseData(updatedCourseData);
-  // REMEBER 
-  console.log('UPDATED:', { id: numberId, name, startDate });
+  console.log(chalk.blue(`UPDATED: ${id} ${name} ${startDate}`));
 }
 
 function deleteCourse(id) {
@@ -53,11 +54,10 @@ function deleteCourse(id) {
   checkId(courseData, id, 'Course');
   const numberId = Number(id);
   // I find the course to be deleted so that I can show its details before deleting it.
-  // maybe i need also toFind as seprate function. // REMEBER 
+  // maybe i need also toFind as seprate function. // REMEBER
   const courseTofind = courseData.find((course) => course.id === numberId);
   const { id: courseId, name, startDate } = courseTofind;
-  // REMEBER 
-  console.log('DELETED', { id: courseId, name });
+  console.log(chalk.yellow(`DELETED: ${id} ${name}`));
   // I make a new array of courses that does not include the deleted course.
   const updatedCourseData = courseData.filter(
     (course) => course.id !== numberId
@@ -70,7 +70,7 @@ function joinCourse(courseID, traineeID) {
   const traineeData = loadTraineeData();
   // 1- Checked if the ID for both was provided.
   if (!courseID || !traineeID) {
-    throw new Error('ERROR: Must provide course ID and trainee ID');
+    throw new Error(chalk.red('ERROR: Must provide course ID and trainee ID'));
   }
   // 2- checked if the ID for both was exist in the Data.
   checkId(courseData, courseID, 'Course');
@@ -82,7 +82,9 @@ function joinCourse(courseID, traineeID) {
     (course) => course.id === numberCourseId
   );
   if (courseTojoin.participants.includes(numberTraineeId)) {
-    throw new Error('ERROR: The Trainee has already joined this course');
+    throw new Error(
+      chalk.red('ERROR: The Trainee has already joined this course')
+    );
   }
   // 4- checked how many courses that the Trainee joined.
   const numCoursesForTrainee = courseData.filter((course) =>
@@ -90,12 +92,12 @@ function joinCourse(courseID, traineeID) {
   );
   if (numCoursesForTrainee.length >= 5) {
     throw new Error(
-      'ERROR: A trainee is not allowed to join more than 5 courses.'
+      chalk.red('ERROR: A trainee is not allowed to join more than 5 courses.')
     );
   }
   // 5- checked how many participants in the course.
   if (courseTojoin.participants.length >= 20) {
-    throw new Error('ERROR: The course is full.');
+    throw new Error(chalk.red('ERROR: The course is full.'));
   }
   // 6- Updated the Data
   const updatedCourseData = courseData.map((course) => {
@@ -110,7 +112,7 @@ function joinCourse(courseID, traineeID) {
   const trainee = traineeData.find((trainee) => trainee.id === numberTraineeId);
   const traineeName = `${trainee.firstName} ${trainee.lastName}`;
   saveCourseData(updatedCourseData);
-  console.log(`${traineeName} Joined ${courseName}`);
+  console.log(chalk.gray(`${traineeName} Joined ${courseName}`));
 }
 
 function leaveCourse(courseID, traineeID) {
@@ -120,7 +122,7 @@ function leaveCourse(courseID, traineeID) {
   const numberTraineeId = Number(traineeID);
   // 1- Checked if the ID for both was provided.
   if (!courseID || !traineeID) {
-    throw new Error('ERROR: Must provide course ID and trainee ID');
+    throw new Error(chalk.red('ERROR: Must provide course ID and trainee ID'));
   }
   checkId(courseData, courseID, 'Course');
   checkId(traineeData, traineeID, 'Trainee');
@@ -129,7 +131,7 @@ function leaveCourse(courseID, traineeID) {
     (course) => course.id === numberCourseId
   );
   if (!courseToleave.participants.includes(numberTraineeId)) {
-    throw new Error('ERROR: The Trainee did not join the course');
+    throw new Error(chalk.red('ERROR: The Trainee did not join the course'));
   }
   const updatedCourseData = courseData.map((course) => {
     if (course.id === numberCourseId) {
@@ -145,7 +147,7 @@ function leaveCourse(courseID, traineeID) {
   const trainee = traineeData.find((trainee) => trainee.id === numberTraineeId);
   const traineeName = `${trainee.firstName} ${trainee.lastName}`;
   saveCourseData(updatedCourseData);
-  console.log(`${traineeName} Left ${courseName}`);
+  console.log(chalk.gray(`${traineeName} Left ${courseName}`));
 }
 
 function getCourse(id) {
@@ -159,10 +161,10 @@ function getCourse(id) {
   const traineesInCourse = loadTraineeData().filter((trainee) =>
     courseTofind.participants.includes(trainee.id)
   );
-  console.log('participants:' + traineesInCourse.length);
+  console.log(chalk.blueBright('participants:') + traineesInCourse.length);
   traineesInCourse.forEach((trainee) => {
     const { id, firstName, lastName } = trainee;
-    // REMEBER 
+    // REMEBER
     console.log(id, firstName, lastName);
   });
 }
@@ -174,18 +176,28 @@ function getAllCourses() {
   let sortedCourseData = copiedCourseData.sort((a, b) =>
     a.startDate.localeCompare(b.startDate)
   );
-  console.log('Courses:');
+  console.log(chalk.blueBright('Courses:'));
   sortedCourseData.forEach((course) => {
-    const numberOfParticipants =course.participants.length;
-    const { id, name, startDate} = course;
-    // REMEBER  FULL OR NOT
-    console.log(id, name, startDate,numberOfParticipants);
+    const numberOfParticipants = course.participants.length;
+    const { id, name, startDate } = course;
+    // I check if the course is FULL OR NOT.
+    if (numberOfParticipants >= 20) {
+      console.log(id, name, startDate, numberOfParticipants, chalk.red('FULL'));
+    } else {
+      console.log(
+        id,
+        name,
+        startDate,
+        numberOfParticipants,
+        chalk.green('NOT FULL')
+      );
+    }
   });
-  console.log('Total:', count);
+  console.log(chalk.blueBright('Total:'), count);
 }
 
 export function handleCourseCommand(subcommand, args) {
-    if (subcommand === 'ADD') {
+  if (subcommand === 'ADD') {
     addCourse(...args);
   } else if (subcommand === 'UPDATE') {
     updateCourse(...args);
@@ -193,11 +205,16 @@ export function handleCourseCommand(subcommand, args) {
     deleteCourse(...args);
   } else if (subcommand === 'GET') {
     getCourse(...args);
-  } else if(subcommand === 'JOIN'){
-    joinCourse(...args)
-  } else if(subcommand==='LEAVE'){
-    leaveCourse(...args)
-  }else if (subcommand === 'GETALL') {
+  } else if (subcommand === 'JOIN') {
+    joinCourse(...args);
+  } else if (subcommand === 'LEAVE') {
+    leaveCourse(...args);
+  } else if (subcommand === 'GETALL') {
+    if (args.length !== 0) {
+      throw new Error(chalk.red('ERROR: Invalid command'));
+    }
     getAllCourses();
+  } else {
+    throw new Error(chalk.red('Invalid Subcommand'));
   }
 }
