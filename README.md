@@ -45,3 +45,54 @@ As you can see, the application is divided into several components:
 You may create additional files if needed.
 
 Project setup completed
+
+## Project Description
+
+This project is a Node.js CLI application that simulates a simple school management system.  
+It allows managing trainees and courses, including creating, updating, deleting, and viewing entities, as well as enrolling and removing trainees from courses.
+
+The application follows a modular architecture with clear separation between command parsing, command handling, validation logic, and data persistence.
+
+## Features Implemented
+
+### Trainee Management
+
+- Create trainee
+- Update trainee
+- Delete trainee
+- View trainee with enrolled courses
+- View all trainees (sorted by the last Name)
+
+### Course Management
+
+- Create course
+- Update course
+- Delete course
+- View course with participants
+- View all courses (sorted by the start Date)
+- Join course
+- Leave course
+
+### Business Rules
+
+- A trainee can join a maximum of 5 courses
+- Each course has a maximum capacity of 20 trainees
+- Unique ID generation for trainees and courses
+
+## Validation & Error Handling
+
+- Command parsing with input normalization
+- Validation for required parameters
+- Entity existence validation
+- Course date format validation (YYYY-MM-DD)
+- CLI error handling using Chalk
+- Storage error logging using console.error
+
+## Additional Files
+
+- `commonFunctions.js`: Utility functions for validation and shared logic, including unique ID generation, entity existence checks, and course date format validation.
+
+## Learning Reflection
+
+This project helped me practice building a larger JavaScript application with multiple modules, implementing business rules, working with CLI input parsing, and applying Git workflow using branches and pull requests.  
+The JOIN functionality was particularly challenging and required careful reasoning about data relationships and constraints.

@@ -4,7 +4,7 @@ import {
   saveCourseData,
   loadCourseData,
 } from './storage.js';
-import { idGenerator, checkId } from './commenFunction.js';
+import { idGenerator, checkId } from './commonFunction.js';
 import chalk from 'chalk';
 
 function addTrainee(firstName, lastName) {
