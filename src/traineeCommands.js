@@ -1,40 +1,31 @@
-import { saveTraineeData, loadTraineeData } from './storage.js';
-import { saveCourseData, loadCourseData } from './storage.js';
+import { saveTraineeData, loadTraineeData,saveCourseData,loadCourseData} from './storage.js';
+import { idGenerator, checkId } from './commenFunction.js';
 
 function addTrainee(firstName, lastName) {
   const TraineeData = loadTraineeData();
-  let id = Math.floor(Math.random() * 100000);
-  // I make sure that Id is unique by checking if it already exists.
-  while(TraineeData.some(trainee => trainee.id === id)) {
-    // If it does, I generate a new random ID until I find one that is not already in use.
-    //unique ID - a random number between 0 and 99999.
-    id = Math.floor(Math.random() * 100000);
-  }
+  let id = idGenerator(TraineeData);
   if (!firstName || !lastName) {
     throw new Error('ERROR: Must provide first and last name');
   }
   const newTrainee = {
-    id : id,
+    id: id,
     firstName: firstName.trim(),
     lastName: lastName.trim(),
-    };
+  };
   const updatedTraineeData = [...TraineeData, newTrainee];
   saveTraineeData(updatedTraineeData);
-  // for later i need here to edit how to show this 
+  // for later i need here to edit how to show this
   console.log('CREATED:', newTrainee);
 }
 
-function updateTrainee(Id, firstName, lastName) {
+function updateTrainee(id, firstName, lastName) {
   const TraineeData = loadTraineeData();
-  if(!Id || !firstName || !lastName) {
+  if (!id || !firstName || !lastName) {
     throw new Error('ERROR: Must provide ID, first name and last name');
   }
-  // I convert the ID to a number because it is stored as a number in the data, but it is passed as a string from the command line.
-  const numberId = Number(Id);
-  if (!TraineeData.some(trainee => trainee.id === numberId)) {
-    throw new Error(`ERROR: Trainee with ID ${Id} does not exist`);
-  }
-  const updatedTraineeData = TraineeData.map(trainee => {
+  checkId(TraineeData,id,"Trainee")
+  const numberId = Number(id);
+  const updatedTraineeData = TraineeData.map((trainee) => {
     if (trainee.id === numberId) {
       return {
         ...trainee,
@@ -45,41 +36,40 @@ function updateTrainee(Id, firstName, lastName) {
     return trainee;
   });
   saveTraineeData(updatedTraineeData);
-  console.log('UPDATED:', { Id:numberId, firstName, lastName });
-  
+  console.log('UPDATED:', { id, firstName, lastName });
 }
 
-function deleteTrainee(Id) {
-  const TraineeData= loadTraineeData();
-  const numberId = Number(Id);
-  if (!TraineeData.some(trainee => trainee.id === numberId)) {
-    throw new Error(`ERROR: Trainee with ID ${Id} does not exist`);
-  } 
+function deleteTrainee(id) {
+  const TraineeData = loadTraineeData();
+  checkId(TraineeData,id,"Trainee")
   // I find the trainee to be deleted so that I can show its details before deleting it.
-  const traineeTofind = TraineeData.find(trainee => trainee.id === numberId);
-  const{id, firstName, lastName} = traineeTofind;
-  console.log('DELETED',{ id, firstName, lastName });
-  // I make a new array of trainees that does not include the deleted trainee. 
-  const traineeDeleted = TraineeData.filter(trainee => trainee.id !== numberId);
+  const numberId = Number(id);
+  const traineeTofind = TraineeData.find((trainee) => trainee.id === numberId);
+  const { id:deletedId, firstName, lastName } = traineeTofind;
+  console.log('DELETED', { id:deletedId, firstName, lastName });
+  // I make a new array of trainees that does not include the deleted trainee.
+  const traineeDeleted = TraineeData.filter(
+    (trainee) => trainee.id !== numberId
+  );
   saveTraineeData(traineeDeleted);
 }
 
-function fetchTrainee(Id) {
+function fetchTrainee(id) {
   const TraineeData = loadTraineeData();
-  const numberId = Number(Id);
-  if (!TraineeData.some(trainee => trainee.id === numberId)) {
-    throw new Error(`ERROR: Trainee with ID ${Id} does not exist`);
-  }
+  checkId(TraineeData,id,"Trainee")
+  const numberId = Number(id);
   // I find the trainee to be geted so that I can show its details.
-  const traineeTofind = TraineeData.find(trainee => trainee.id === numberId);
-  const{id, firstName, lastName} = traineeTofind;
+  const traineeTofind = TraineeData.find((trainee) => trainee.id === numberId);
+  const { idToGet, firstName, lastName } = traineeTofind;
   // I find all courses that the trainee has.
-  const courses = loadCourseData().filter(course => course.participants.includes(numberId));
-  const coursesName= courses.map(course => course.name);
+  const courses = loadCourseData().filter((course) =>
+    course.participants.includes(numberId)
+  );
+  const coursesName = courses.map((course) => course.name);
   if (coursesName.length === 0) {
     console.log(id, firstName, lastName);
     console.log('Courses: None');
-  }else{
+  } else {
     console.log(id, firstName, lastName);
     console.log(`Courses: ${coursesName.join(', ')}`);
   }
@@ -89,13 +79,15 @@ function fetchAllTrainees() {
   const TraineeData = loadTraineeData();
   let count = TraineeData.length;
   const copiedTraineeData = [...TraineeData];
-  let sortedTraineeData = copiedTraineeData.sort((a, b) => a.lastName.localeCompare(b.lastName));
+  let sortedTraineeData = copiedTraineeData.sort((a, b) =>
+    a.lastName.localeCompare(b.lastName)
+  );
   console.log('Trainees:');
-  sortedTraineeData.forEach(trainee =>{
-    const{id, firstName, lastName} = trainee;
-    console.log(id, firstName, lastName);
+  sortedTraineeData.forEach((trainee) => {
+    const { id:idToGet, firstName, lastName } = trainee;
+    console.log(idToGet, firstName, lastName);
   });
-  console.log('Total:',count);
+  console.log('Total:', count);
 }
 
 export function handleTraineeCommand(subcommand, args) {
