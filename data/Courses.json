@@ -4,13 +4,13 @@
     "name": "Intro to JavaScript Course",
     "startDate": "20226-02-01",
     "participants": [
-      12345,
-      12346
+      12345, 12346, 73333, 48433, 82310, 30301, 94153, 69369, 46061, 92506,
+      49756, 35310, 32826, 32828, 32830, 32870, 32871, 32890, 32895, 32899
     ]
   },
   {
     "id": 53435,
-    "name": "PYTHON",
+    "name": "SQL",
     "startDate": "2000-20-20",
     "participants": []
   },
@@ -21,9 +21,9 @@
     "participants": []
   },
   {
-    "id": 47132,
-    "name": "Python",
-    "startDate": "2000-03-20",
+    "id": 3519,
+    "name": "DATASCIENCE",
+    "startDate": "2003-10-11",
     "participants": []
   }
 ]

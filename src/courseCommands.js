@@ -4,17 +4,19 @@ import {
   saveCourseData,
   loadCourseData,
 } from './storage.js';
-import { idGenerator, checkDatePattern, checkId } from './commenFunction.js';
+import { idGenerator, checkDatePattern, checkId } from './commonFunction.js';
 import chalk from 'chalk';
 
 function addCourse(name, startDate) {
   const courseData = loadCourseData();
   let id = idGenerator(courseData);
+  // to check if input include name and startDate.
   if (!name || !startDate) {
     throw new Error(
       chalk.red('ERROR: Must provide course name and start date')
     );
   }
+  // to check the date format YYYY-MM-DD.
   checkDatePattern(startDate);
   const newCourse = {
     id: id,
@@ -29,6 +31,7 @@ function addCourse(name, startDate) {
 
 function updateCourse(id, name, startDate) {
   const courseData = loadCourseData();
+  // to check if input include id and name and startDate.
   if (!id || !name || !startDate) {
     throw new Error(chalk.red('ERROR: Must provide ID, name and start date.'));
   }
@@ -126,15 +129,17 @@ function leaveCourse(courseID, traineeID) {
   }
   checkId(courseData, courseID, 'Course');
   checkId(traineeData, traineeID, 'Trainee');
-  //
+  // 2- to find the course that the trainee want to leave.
   const courseToleave = courseData.find(
     (course) => course.id === numberCourseId
   );
+  // 3- to check if the trainee in the course or not before leave the course.
   if (!courseToleave.participants.includes(numberTraineeId)) {
     throw new Error(chalk.red('ERROR: The Trainee did not join the course'));
   }
   const updatedCourseData = courseData.map((course) => {
     if (course.id === numberCourseId) {
+      // new Array without the trainee after he left the course.
       const newParticipants = course.participants.filter(
         (id) => id !== numberTraineeId
       );
@@ -164,7 +169,6 @@ function getCourse(id) {
   console.log(chalk.blueBright('participants:') + traineesInCourse.length);
   traineesInCourse.forEach((trainee) => {
     const { id, firstName, lastName } = trainee;
-    // REMEBER
     console.log(id, firstName, lastName);
   });
 }
