@@ -1,3 +1,4 @@
+import chalk from 'chalk';
 import fs from 'node:fs';
 
 const TRAINEE_DATA_FILE_PATH = './data/trainees.json';
@@ -8,6 +9,7 @@ export function loadTraineeData() {
     const traineeData = fs.readFileSync(TRAINEE_DATA_FILE_PATH, 'utf8');
     return JSON.parse(traineeData);
   } catch (error) {
+    console.error(chalk.red('Error loading trainee data:' + error.message));
     return [];
   }
 }
@@ -17,7 +19,7 @@ export function saveTraineeData(traineeData) {
     const jsonTrainee = JSON.stringify(traineeData, null, 2);
     fs.writeFileSync(TRAINEE_DATA_FILE_PATH, jsonTrainee);
   } catch (error) {
-    throw new Error('Saving Trainee Data is failed' + error.message);
+    throw new Error(chalk.red('Saving Trainee Data is failed' + error.message));
   }
 }
 
@@ -26,6 +28,7 @@ export function loadCourseData() {
     const courseData = fs.readFileSync(COURSE_DATA_FILE_PATH, 'utf8');
     return JSON.parse(courseData);
   } catch (error) {
+    console.error(chalk.red('Error loading Course data:', error.message));
     return [];
   }
 }
@@ -35,6 +38,6 @@ export function saveCourseData(courseData) {
     const jsonCourse = JSON.stringify(courseData, null, 2);
     fs.writeFileSync(COURSE_DATA_FILE_PATH, jsonCourse);
   } catch (error) {
-    throw new Error('Saving Course Data is failed' + error.message);
+    throw new Error(chalk.red('Saving Course Data is failed' + error.message));
   }
 }

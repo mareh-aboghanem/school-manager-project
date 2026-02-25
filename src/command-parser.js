@@ -1,4 +1,6 @@
 export function parseCommand(userInput) {
-  const [command, subcommand, ...args] = userInput.split(' ');
+  // In case there is more space in the input.
+  const cleanedInput = userInput.trim().replace(/\s+/g, ' ');
+  const [command, subcommand, ...args] = cleanedInput.split(' ');
   return { command, subcommand, args };
 }
